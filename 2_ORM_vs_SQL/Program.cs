@@ -85,12 +85,12 @@ namespace _2_ORM_vs_SQL
                         join product in context.Products
                             on orderDetail.ProductId equals product.ProductId
                         select new { employee.FirstName, product.ProductName } into result
-                        group result by new { result.FirstName, result.ProductName } into result
+                        group result by new { result.FirstName, result.ProductName } into groupedResult
                         select new
                         {
-                            result.Key.FirstName,
-                            result.Key.ProductName,
-                            Count = result.Count()
+                            groupedResult.Key.FirstName,
+                            groupedResult.Key.ProductName,
+                            Count = groupedResult.Count()
                         };
 
             var data = await query.ToListAsync();
