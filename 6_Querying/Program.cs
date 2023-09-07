@@ -11,7 +11,15 @@ namespace _6_Querying
             //await Querying();
             //await Where();
             //await OrderBy();
-            await ThenBy();
+            //await ThenBy();
+            //await Single();
+            //await SingleOrDefault();
+            //await First();
+            //await FirstOrDefault();
+            //await Last();
+            //await LastOrDefault();
+            await Find();
+
         }
 
         static async Task Querying()
@@ -111,6 +119,128 @@ namespace _6_Querying
                 Console.WriteLine($"{item.ProductName} - {item.UnitPrice}");
             }
             Console.WriteLine();
+        }
+       
+        static async Task Single()
+        {
+            var context = new NorthwindContext();
+
+            Product? product;
+
+            //Single element
+            product = await context.Products.SingleAsync(u => u.ProductId == 55);
+
+            //No elements
+            //product = await context.Products.SingleAsync(u => u.ProductId == 5555);
+
+            //More than one element
+            //product = await context.Products.SingleAsync(u => u.ProductId > 55);
+
+
+            Console.WriteLine($"{product.ProductId} - {product.ProductName}");
+
+        }
+        static async Task SingleOrDefault()
+        {
+            var context = new NorthwindContext();
+            Product? product;
+
+            //Single element
+            product = await context.Products.SingleOrDefaultAsync(u => u.ProductId == 55);
+
+            //No elements
+            //product = await context.Products.SingleOrDefaultAsync(u => u.ProductId == 5555);
+
+            //More than one element
+            //product = await context.Products.SingleOrDefaultAsync(u => u.ProductId > 55);
+
+            Console.WriteLine($"{product.ProductId} - {product.ProductName}");
+
+        }
+
+        static async Task First()
+        {
+            var context = new NorthwindContext();
+            Product? product;
+
+            //Single element
+            product = await context.Products.FirstAsync(u => u.ProductId == 55);
+
+            //No elements
+            //product = await context.Products.FirstAsync(u => u.ProductId == 5555);
+
+            //More than one element
+            //product = await context.Products.FirstAsync(u => u.ProductId > 55);
+
+            Console.WriteLine($"{product.ProductId} - {product.ProductName}");
+
+        }
+        static async Task FirstOrDefault()
+        {
+            var context = new NorthwindContext();
+            Product? product;
+
+            //Single element
+            product = await context.Products.FirstOrDefaultAsync(u => u.ProductId == 55);
+
+            //No elements
+            //product = await context.Products.FirstOrDefaultAsync(u => u.ProductId == 5555);
+
+            //More than one element
+            //product = await context.Products.FirstOrDefaultAsync(u => u.ProductId > 55);
+
+            Console.WriteLine($"{product.ProductId} - {product.ProductName}");
+
+        }
+
+        static async Task Last()
+        {
+            var context = new NorthwindContext();
+            Product? product;
+
+            //Single element
+            product = await context.Products.OrderByDescending(p => p.ProductName).LastAsync(u => u.ProductId == 55);
+
+            //No elements
+            //product = await context.Products.OrderByDescending(p => p.ProductName).LastAsync(u => u.ProductId == 5555);
+
+            //More than one element
+            //product = await context.Products.OrderByDescending(p => p.ProductName).LastAsync(u => u.ProductId > 55);
+
+            Console.WriteLine($"{product.ProductId} - {product.ProductName}");
+
+        }
+        static async Task LastOrDefault()
+        {
+            var context = new NorthwindContext();
+            Product? product;
+
+            //Single element
+            product = await context.Products.OrderBy(p => p.ProductName).LastOrDefaultAsync(u => u.ProductId == 55);
+
+            //No elements
+            //product = await context.Products.OrderBy(p => p.ProductName).LastOrDefaultAsync(u => u.ProductId == 5555);
+
+            //More than one element
+            //product = await context.Products.OrderBy(p => p.ProductName).LastOrDefaultAsync(u => u.ProductId > 55);
+
+            Console.WriteLine($"{product.ProductId} - {product.ProductName}");
+
+        }
+
+        static async Task Find()
+        {
+            var context = new NorthwindContext();
+
+            var product = await context.Products.FindAsync(55);
+            //var product = await context.Products.FirstOrDefaultAsync(u => u.ProductId == 55);
+
+            //With Composite Primary Key
+            //var product = await context.Products.FindAsync(55, 11);
+
+            Console.WriteLine($"{product.ProductId} - {product.ProductName}");
+
+
         }
 
 
