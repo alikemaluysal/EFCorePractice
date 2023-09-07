@@ -20,7 +20,9 @@ namespace _6_Querying
             //await LastOrDefault();
             //await Find();
             //await OtherQueryOperations();
-            await CollectionOperations();
+            //await CollectionOperations();
+            //await GroupBy();
+            await ForEach();
 
         }
 
@@ -340,6 +342,56 @@ namespace _6_Querying
                 Price = p.UnitPrice,
                 CategoryName = c.CategoryName
             }).ToListAsync();
+
+        }
+
+        static async Task GroupBy()
+        {
+            var context = new NorthwindContext();
+
+            //Method Syntax
+            var categoryProductCounts = await context.Products
+                .Include(p => p.Category)
+                .GroupBy(p => p.Category.CategoryName)
+                .Select(categoryGroup => new
+                {
+                    Category = categoryGroup.Key,
+                    ProductCount = categoryGroup.Count()
+                })
+                .ToListAsync();
+
+
+            //Query Syntax
+            var categoryProductCounts2 = await (
+                from product in context.Products
+                join category in context.Categories on product.CategoryId equals category.CategoryId
+                group product by category.CategoryName into categoryGroup
+                select new
+                {
+                    Category = categoryGroup.Key,
+                    ProductCount = categoryGroup.Count()
+                }
+                ).ToListAsync();
+
+        }
+
+        static async Task ForEach()
+        {
+            var context = new NorthwindContext();
+
+            var products = await context.Products.ToListAsync();
+
+
+            //foreach (var p in products)
+            //{
+            //    Console.WriteLine($"{p.ProductId} - {p.ProductName}");
+            //}
+
+            products.ForEach(p =>
+            {
+                Console.WriteLine($"{p.ProductId} - {p.ProductName}");
+
+            });
 
         }
     }
