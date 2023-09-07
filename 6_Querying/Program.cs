@@ -8,7 +8,10 @@ namespace _6_Querying
     {
         static async Task Main(string[] args)
         {
-            Querying();
+            //await Querying();
+            //await Where();
+            //await OrderBy();
+            await ThenBy();
         }
 
         static async Task Querying()
@@ -41,5 +44,75 @@ namespace _6_Querying
                 Console.WriteLine(item.ProductId);
             }
         }
+
+        static async Task Where()
+        {
+            var context = new NorthwindContext();
+
+            //Method Syntax
+            var products = await context.Products.Where(p => p.ProductId > 20 && p.ProductId < 50).ToListAsync();
+
+            //Query Syntax
+            var query = from product in context.Products
+                          where product.ProductId > 5 && product.ProductName.StartsWith("L")
+                        select product;
+
+            var products2 = await query.ToListAsync();
+
+
+            foreach (var item in products2)
+            {
+                Console.WriteLine($"{item.ProductId} - {item.ProductName}");
+            }
+            Console.WriteLine();
+        }
+
+        static async Task OrderBy()
+        {
+            var context = new NorthwindContext();
+
+            //Method Syntax
+            var products = await context.Products.OrderBy(p => p.ProductName).ToListAsync();
+            //var products = await context.Products.OrderByDescending(p => p.ProductName).ToListAsync();
+
+            //Query Syntax
+            var query = from product in context.Products
+                        orderby product.ProductName descending
+                        select product;
+
+            var products2 = await query.ToListAsync();
+
+
+            foreach (var item in products2)
+            {
+                Console.WriteLine($"{item.ProductName}");
+            }
+            Console.WriteLine();
+        }
+
+        static async Task ThenBy()
+        {
+            var context = new NorthwindContext();
+
+            //Method Syntax
+            var products = await context.Products.OrderBy(p => p.UnitPrice).ThenBy(p => p.ProductName).ToListAsync();
+            //var products = await context.Products.OrderByDescending(p => p.UnitPrice).ThenByDescending(p => p.ProductName).ToListAsync();
+
+            //Query Syntax
+            var query = from product in context.Products
+                        orderby product.UnitPrice descending, product.ProductName ascending 
+                        select product;
+
+            var products2 = await query.ToListAsync();
+
+
+            foreach (var item in products2)
+            {
+                Console.WriteLine($"{item.ProductName} - {item.UnitPrice}");
+            }
+            Console.WriteLine();
+        }
+
+
     }
 }
