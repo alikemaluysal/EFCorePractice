@@ -18,7 +18,8 @@ namespace _6_Querying
             //await FirstOrDefault();
             //await Last();
             //await LastOrDefault();
-            await Find();
+            //await Find();
+            await OtherQueryOperations();
 
         }
 
@@ -241,6 +242,52 @@ namespace _6_Querying
             Console.WriteLine($"{product.ProductId} - {product.ProductName}");
 
 
+        }
+
+        static async Task OtherQueryOperations()
+        {
+            var context = new NorthwindContext();
+
+            //Count
+            int count = (await context.Products.ToListAsync()).Count();
+            count = await context.Products.CountAsync();
+
+            //LongCount (COUNT_BIG)
+            long longCount = await context.Products.LongCountAsync(u => u.UnitPrice > 30);
+
+            //Any (EXISTS) 
+            bool exists = await context.Products.AnyAsync(u => u.ProductName.Contains("L"));
+            //bool exists = await context.Products.Where(u => u.ProductName.Contains("L")).AnyAsync();
+
+            //Max
+            var price = await context.Products.MaxAsync(u => u.UnitPrice);
+
+            //Min
+            price = await context.Products.MinAsync(u => u.UnitPrice);
+
+            //Distinct
+            var products = await context.Products.Distinct().ToListAsync();
+
+            //All
+            var allPricesBelow15000 = await context.Products.AllAsync(u => u.UnitPrice < 15000);
+            var anyProductNameContainsA = await context.Products.AllAsync(u => u.ProductName.Contains("a"));
+
+            //Sum
+            var totalPrice = await context.Products.SumAsync(u => u.UnitPrice);
+
+            //Average
+            var average = await context.Products.AverageAsync(u => u.UnitPrice);
+
+            //Like query - Contains ('%...%')
+            products = await context.Products.Where(u => u.ProductName.Contains("a")).ToListAsync();
+
+            //Like query - StartsWith ('...%')
+            products = await context.Products.Where(u => u.ProductName.StartsWith("A")).ToListAsync();
+
+            //Like query - EndsWith ('%...')
+            products = await context.Products.Where(u => u.ProductName.EndsWith("a")).ToListAsync();
+
+            Console.WriteLine();
         }
 
 
