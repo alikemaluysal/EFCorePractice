@@ -19,7 +19,8 @@ namespace _6_Querying
             //await Last();
             //await LastOrDefault();
             //await Find();
-            await OtherQueryOperations();
+            //await OtherQueryOperations();
+            await CollectionOperations();
 
         }
 
@@ -31,7 +32,7 @@ namespace _6_Querying
             IEnumerable<Product> products = await context.Products.ToListAsync();
 
             //Query Syntax
-            IEnumerable<Product> products2 = await(
+            IEnumerable<Product> products2 = await (
                             from product in context.Products
                             select product
                             ).ToListAsync();
@@ -63,7 +64,7 @@ namespace _6_Querying
 
             //Query Syntax
             var query = from product in context.Products
-                          where product.ProductId > 5 && product.ProductName.StartsWith("L")
+                        where product.ProductId > 5 && product.ProductName.StartsWith("L")
                         select product;
 
             var products2 = await query.ToListAsync();
@@ -109,7 +110,7 @@ namespace _6_Querying
 
             //Query Syntax
             var query = from product in context.Products
-                        orderby product.UnitPrice descending, product.ProductName ascending 
+                        orderby product.UnitPrice descending, product.ProductName ascending
                         select product;
 
             var products2 = await query.ToListAsync();
@@ -121,7 +122,7 @@ namespace _6_Querying
             }
             Console.WriteLine();
         }
-       
+
         static async Task Single()
         {
             var context = new NorthwindContext();
@@ -290,6 +291,56 @@ namespace _6_Querying
             Console.WriteLine();
         }
 
+        static async Task CollectionOperations()
+        {
+            var context = new NorthwindContext();
 
+            //ToList
+            List<Product> productsList = await context.Products.ToListAsync();
+
+            //ToDictionary
+            Dictionary<int, string> productsDictionary = await context.Products.ToDictionaryAsync(p => p.ProductId, p => p.ProductName);
+
+            //ToArray
+            Product[] productsArray = await context.Products.ToArrayAsync();
+
+            //Select
+            //1. Specifying Columns in the Query
+            List<Product> selectedProducts = await context.Products.Select(p => new Product
+            {
+                ProductId = p.ProductId,
+                ProductName = p.ProductName,
+                UnitPrice = p.UnitPrice
+            }).ToListAsync();
+
+            //2. Selecting with an Anonymous Type
+            var anonymousProducts = await context.Products.Select(p => new
+            {
+                Id = p.ProductId,
+                Name = p.ProductName,
+                Price = p.UnitPrice
+            }).ToListAsync();
+
+            //3. Selecting with a Different Data Type
+            // Select and transform data into a different data type.
+            List<ProductDetails> productDetailsWithSelect = await context.Products.Include(p => p.Category).Select(p => new ProductDetails
+            {
+                Id = p.ProductId,
+                Name = p.ProductName,
+                Price = p.UnitPrice,
+                CategoryName = p.Category.CategoryName
+            }).ToListAsync();
+
+            //SelectMany (with entity relationships)
+            //Combine and select associated data using SelectMany.
+            List<ProductDetails> productDetailsWithSelectMany = await context.Categories.Include(p => p.Products).SelectMany(c => c.Products, (c, p) => new ProductDetails
+            {
+                Id = p.ProductId,
+                Name = p.ProductName,
+                Price = p.UnitPrice,
+                CategoryName = c.CategoryName
+            }).ToListAsync();
+
+        }
     }
 }
